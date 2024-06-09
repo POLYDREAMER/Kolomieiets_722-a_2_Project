@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Surname_Group_Course_project;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,6 +14,7 @@ namespace Kolomieiets_722_a_2_Project_1
     public partial class Form1 : Form
     {
         private bool Mode; // Режим дозволу / заборони введення даних
+        private MajorWork MajorObject; // Створення об'єкта класу MajorWork
         public Form1()
         {
             InitializeComponent();
@@ -25,6 +27,11 @@ namespace Kolomieiets_722_a_2_Project_1
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            About A = new About(); // створення форми About
+
+            A.tAbout.Start();
+            A.ShowDialog(); // відображення діалогового вікна About
+            MajorObject = new MajorWork();
             this.Mode = true;
         }
 
@@ -51,6 +58,9 @@ namespace Kolomieiets_722_a_2_Project_1
                 tClock.Stop();
                 bStart.Text = "Пуск";// зміна тексту на кнопці на "Пуск"
                 this.Mode = true;
+                MajorObject.Write(tbInput.Text);// Запис даних у об'єкт
+                MajorObject.Task();// Обробка даних
+                label1.Text = MajorObject.Read();// Відображення результату
             }
         }
 
