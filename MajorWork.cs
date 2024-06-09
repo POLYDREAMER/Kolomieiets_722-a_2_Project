@@ -45,5 +45,16 @@ namespace Kolomieiets_722_a_2_Project_1
                 this.Result = Convert.ToString(false);
             }
         }
+
+        private string SaveFileName;// ім’я файлу для запису
+        private string OpenFileName;// ім’я файлу для читання
+        public void WriteSaveFileName(string S)// метод запису даних в об'єкт
+        {
+            this.SaveFileName = S;// запам'ятати ім’я файлу для запису
+        }
+        public void WriteOpenFileName(string S)
+        {
+            this.OpenFileName = S;// запам'ятати ім’я файлу для відкриття
+        }
     }
 }
