@@ -8,9 +8,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.IO.Ports;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolBar;
 
 namespace Kolomieiets_722_a_2_Project_1
 {
@@ -24,6 +26,8 @@ namespace Kolomieiets_722_a_2_Project_1
         ToolStripLabel timeLabel;
         ToolStripLabel infoLabel;
         Timer timer;
+        string InputData = String.Empty;
+        delegate void SetTextCallback(string text);
 
         public Form1()
         {
@@ -40,7 +44,22 @@ namespace Kolomieiets_722_a_2_Project_1
             timer.Start();
         }
 
-
+        void AddData(string text)
+        {
+            listBox1.Items.Add(text);
+        }
+        private void SetText(string text)
+        {
+            if (this.listBox1.InvokeRequired)
+            {
+                SetTextCallback d = new SetTextCallback(SetText);
+                this.Invoke(d, new object[] { text });
+            }
+            else
+            {
+                this.AddData(text);
+            }
+        }
 
 
         void timer_Tick(object sender, EventArgs e)
@@ -68,6 +87,13 @@ namespace Kolomieiets_722_a_2_Project_1
 
             toolTip1.SetToolTip(bSearch, "Натисніть на кнопку для пошуку");
             toolTip1.IsBalloon = true;
+
+            // отримуємо список СОМ портов системи
+            string[] ports = SerialPort.GetPortNames();
+            foreach (string port in ports)
+            {
+                comboBox1.Items.Add(port);
+            };
         }
 
         private void tClock_Tick(object sender, EventArgs e)
@@ -156,10 +182,10 @@ namespace Kolomieiets_722_a_2_Project_1
         private void зберегтіЯкToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (SfdSave.ShowDialog() == DialogResult.OK) //Виклик діалогу збереження файлу
-{
+            {
                 MajorObject.WriteSaveFileName(SfdSave.FileName); // запис імені файла для збереження
 
-MajorObject.Generator();
+                MajorObject.Generator();
                 MajorObject.SaveToFile(); //метод збереження в файл
             }
         }
@@ -171,7 +197,7 @@ MajorObject.Generator();
         {
             string[] disks = System.IO.Directory.GetLogicalDrives(); // строковий масив з логічних дисків
 
-string disk = "";
+            string disk = "";
             for (int i = 0; i < disks.Length; i++)
             {
                 try
@@ -179,13 +205,13 @@ string disk = "";
                     System.IO.DriveInfo D = new System.IO.DriveInfo(disks[i]);
                     disk += D.Name + "-" + D.TotalSize.ToString() + "-" +
                     D.TotalFreeSpace.ToString() + (char)13;// змінній присвоюється ім'я диска, загальна кількість місця і вільне місце на диску
-                
-}
+
+                }
                 catch
                 {
                     disk += disks[i] + "- не готов" + (char)13; //якщо пристрій не готовий виведення на екран ім'я пристрою і повідомлення "не готовий"
-                
-}
+
+                }
             }
             MessageBox.Show(disk, "накопители");
         }
@@ -202,7 +228,7 @@ string disk = "";
         private void відкритиToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (OfdOpen.ShowDialog() == DialogResult.OK) // Виклик діалогу відкриття файлу
-{
+            {
                 MajorObject.WriteOpenFileName(OfdOpen.FileName); // відкриття файлу 
                 MajorObject.ReadFromFile(dgwOpen); // читання даних з файлу
             }
@@ -223,22 +249,26 @@ string disk = "";
                 catch
                 {
                     disk += disks[i] + "- не готовий" + (char)13; // якщо пристрій не готовий, то виведення на екран ім’я пристрою і повідомлення «не готовий»
-}
+                }
             }
 
             MessageBox.Show(disk, "Накопичувачі");
         }
 
         private void зберегтиToolStripMenuItem_Click(object sender, EventArgs e)
-            {
-                if (MajorObject.SaveFileNameExists()) // задане ім’я файлу існує?
-                    MajorObject.SaveToFile(); // зберегти дані в файл
-                else
-                    зберегтіЯкToolStripMenuItem_Click(sender, e); //
-            }
+        {
+            if (MajorObject.SaveFileNameExists()) // задане ім’я файлу існує?
+                MajorObject.SaveToFile(); // зберегти дані в файл
+            else
+                зберегтіЯкToolStripMenuItem_Click(sender, e); //
+        }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
+            Application.DoEvents();//Обробляє всі повідомлення Windows, які в даний момент знаходяться в черзі повідомлень.
+
+
+
             if (MajorObject.Modify)
                 if (MessageBox.Show("Дані не були збережені. Продовжити вихід?", "УВАГА",
                 MessageBoxButtons.YesNo) == DialogResult.No)
@@ -429,6 +459,142 @@ string disk = "";
             if (o.ShowDialog() == DialogResult.OK)
             {
                 richTextBox1.Text = File.ReadAllText(o.FileName, Encoding.Default);
+            }
+        }
+
+        private void tabPage4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void comboBox4_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void groupBox1_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void groupBox2_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button2_Click(object sender, EventArgs e) {
+            if (button2.Text == "Старт")
+
+            {
+                if (port.IsOpen) port.Close();
+                #region Задаем параметры порта
+                port.PortName = comboBox1.Text;
+                port.BaudRate = Convert.ToInt32(comboBox2.Text);
+                port.DataBits = Convert.ToInt32(comboBox3.Text);
+                switch (comboBox4.Text)
+                {
+                    case "Пробел":
+                        port.Parity = Parity.Space;
+                        break;
+                    case "Чет":
+                        port.Parity = Parity.Even;
+                        break;
+                    case "Нечет":
+                        port.Parity = Parity.Odd;
+                        break;
+                    case "Маркер":
+                        port.Parity = Parity.Mark;
+                        break;
+                    default:
+                        port.Parity = Parity.None;
+                        break;
+                }
+                switch (comboBox5.Text)
+                {
+                    case "2":
+                        port.StopBits = StopBits.Two;
+                        break;
+                    case "1.5":
+                        port.StopBits = StopBits.OnePointFive;
+                        break;
+                    case "Нет":
+                        port.StopBits = StopBits.None;
+                        break;
+
+                    default:
+                        port.StopBits = StopBits.One;
+                        break;
+                }
+                switch (comboBox6.Text)
+                {
+                    case "Xon/Xoff":
+                        port.Handshake = Handshake.XOnXOff;
+                        break;
+                    case "Аппаратное":
+                        port.Handshake = Handshake.RequestToSend;
+                        break;
+                    default:
+                        port.Handshake = Handshake.None;
+                        break;
+                }
+                #endregion
+                try
+                {
+                    port.Open();
+                    button2.Text = "Стоп";
+                    // button2.Enabled = false;
+                }
+                catch
+                {
+                    MessageBox.Show("Порт " + port.PortName + " неможливо відкрити!",
+
+                    "Помилка!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                    comboBox1.SelectedText = "";
+                    button2.Text = "Старт";
+                }
+            }
+            else
+            {
+                if (port.IsOpen) port.Close();
+                button2.Text = "Старт";
+                // button2.Enabled = true;
+            }
+
+
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox1.Text != "")
+
+            {
+                groupBox2.Enabled = true;
+                button2.Enabled = true;
+            }
+            else
+            {
+                groupBox2.Enabled = false;
+                button2.Enabled = false;
+            }
+        }
+
+        private void port_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+            InputData = port.ReadExisting();
+            if (InputData != String.Empty)
+            {
+                SetText(InputData);
             }
         }
     }
