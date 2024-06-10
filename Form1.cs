@@ -17,6 +17,7 @@ namespace Kolomieiets_722_a_2_Project_1
     public partial class Form1 : Form
     {
         private bool Mode; // Режим дозволу / заборони введення даних
+        private SaveFileDialog sf;
         private MajorWork MajorObject; // Створення об'єкта класу MajorWork
 
         ToolStripLabel dateLabel;
@@ -163,11 +164,46 @@ MajorObject.Generator();
             }
         }
 
+
+
+
+        private void оToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string[] disks = System.IO.Directory.GetLogicalDrives(); // строковий масив з логічних дисків
+
+string disk = "";
+            for (int i = 0; i < disks.Length; i++)
+            {
+                try
+                {
+                    System.IO.DriveInfo D = new System.IO.DriveInfo(disks[i]);
+                    disk += D.Name + "-" + D.TotalSize.ToString() + "-" +
+                    D.TotalFreeSpace.ToString() + (char)13;// змінній присвоюється ім'я диска, загальна кількість місця і вільне місце на диску
+                
+}
+                catch
+                {
+                    disk += disks[i] + "- не готов" + (char)13; //якщо пристрій не готовий виведення на екран ім'я пристрою і повідомлення "не готовий"
+                
+}
+            }
+            MessageBox.Show(disk, "накопители");
+        }
+
+
+
+
+
+
+
+
+
+
         private void відкритиToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (OfdOpen.ShowDialog() == DialogResult.OK) // Виклик діалогу відкриття файлу
 {
-                MajorObject.WriteOpenFileName(OfdOpen.FileName); // відкриття файлу
+                MajorObject.WriteOpenFileName(OfdOpen.FileName); // відкриття файлу 
                 MajorObject.ReadFromFile(dgwOpen); // читання даних з файлу
             }
         }
@@ -209,10 +245,7 @@ MajorObject.Generator();
                     e.Cancel = true; // припинити закриття
         }
 
-        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
 
-        }
 
         private void bSearch_Click(object sender, EventArgs e)
         {
@@ -362,6 +395,40 @@ MajorObject.Generator();
                 {
                     continue;
                 }
+            }
+        }
+
+        private void зберегтиЯкToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog sf = new SaveFileDialog();
+
+            sf.Filter = @"Текстовий файл (*.txt)|*.txt|Текстові файли TXT(*.txt)|*.txt|CSV-файл (*.csv)|*.csv|Bin-файл (*.bin)|*.bin";
+
+            if (sf.ShowDialog() == DialogResult.OK)
+            {
+                MajorObject.WriteSaveTextFileName(sf.FileName);
+                MajorObject.SaveToTextFile(sf.FileName, dgwOpen);
+            }
+        }
+
+        private void зберегтиToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            if (MajorObject.SaveTextFileNameExists())
+
+                MajorObject.SaveToTextFile(MajorObject.ReadSaveTextFileName(), dgwOpen);
+            else
+                зберегтиЯкToolStripMenuItem1_Click(sender, e);
+        }
+
+        private void відкритиToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog o = new OpenFileDialog();
+
+            o.Filter = @"Текстовий файл (*.txt)|*.txt|Текстовий файл TXT(*.txt)|*.txt|CSV-файл (*.csv)|*.csv|Bin-файл (*.bin)|*.bin";
+
+            if (o.ShowDialog() == DialogResult.OK)
+            {
+                richTextBox1.Text = File.ReadAllText(o.FileName, Encoding.Default);
             }
         }
     }
