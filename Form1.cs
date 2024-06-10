@@ -124,20 +124,21 @@ namespace Kolomieiets_722_a_2_Project_1
 
         private void зберегтіЯкToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (SfdSave.ShowDialog() == DialogResult.OK) // Виклик діалогу збереження файлу
-            {
-                MajorObject.WriteSaveFileName(SfdSave.FileName); // Запис імені файлу для збереження
-                MajorObject.Generator();
-                MajorObject.SaveToFile(); // метод збереження в файл
+            if (SfdSave.ShowDialog() == DialogResult.OK) //Виклик діалогу збереження файлу
+{
+                MajorObject.WriteSaveFileName(SfdSave.FileName); // запис імені файла для збереження
+
+MajorObject.Generator();
+                MajorObject.SaveToFile(); //метод збереження в файл
             }
         }
 
-            private void відкритиToolStripMenuItem_Click(object sender, EventArgs e)
+        private void відкритиToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (OfdOpen.ShowDialog() == DialogResult.OK) // Виклик діалогового вікна відкриття файлу
-
+            if (OfdOpen.ShowDialog() == DialogResult.OK) // Виклик діалогу відкриття файлу
 {
-                MessageBox.Show(OfdOpen.FileName);
+                MajorObject.WriteOpenFileName(OfdOpen.FileName); // відкриття файлу
+                MajorObject.ReadFromFile(dgwOpen); // читання даних з файлу
             }
         }
 
@@ -176,6 +177,16 @@ namespace Kolomieiets_722_a_2_Project_1
                 if (MessageBox.Show("Дані не були збережені. Продовжити вихід?", "УВАГА",
                 MessageBoxButtons.YesNo) == DialogResult.No)
                     e.Cancel = true; // припинити закриття
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void bSearch_Click(object sender, EventArgs e)
+        {
+            MajorObject.Find(tbSearch.Text); //пошук
         }
     }
 }
