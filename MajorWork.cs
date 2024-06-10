@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Forms;
+using System.Collections;
 
 namespace Kolomieiets_722_a_2_Project_1
 {
@@ -19,6 +20,12 @@ namespace Kolomieiets_722_a_2_Project_1
 
         private string SaveFileName;//
         private string OpenFileName;//
+
+        public Stack myStack = new Stack();
+        public string[] myArr = new string[100];
+
+        public Queue myQueue = new Queue();
+        public string[] smyQueue = new string[100];
 
         public void WriteSaveFileName(string S)// метод запису даних до об'єкту
         {
